@@ -23,9 +23,9 @@ services:
       DB_CONNECTION: pg
       DB_HOST: postgres-db
       DB_PORT: 5432
-      DB_USER: adonis_user
-      DB_PASSWORD: adonis_password
-      DB_DATABASE: adonis_db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
       SESSION_DRIVER: cookie
       LOG_LEVEL: info
       HOST: 0.0.0.0
