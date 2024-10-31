@@ -28,6 +28,15 @@ Les secrets doivent être créés dans docker à l'aide des commandes suivantes 
 echo "MOTDEPASSESECURISE" | docker secret create db_password -
 echo "UNEAPPKEYSECURISE" | docker secret create app_key -
 
+Cette méthode pour gérer les secrets nécessite que Docker Swarm soit activé : 
+
+```bash
+docker swarm init    # Si Swarm n'est pas encore activé
+docker stack deploy -c docker-compose.yml second-docker
+```
+
+Les secrets seront montés dans le container sous forme de fichiers temporaires, ce qui améliore la sécurité car ils ne sont pas stockés comme des variables d'environnement.
+
 ## Validation de la recette
 
 Nous utilisons `hadolint` pour valider nos Dockerfiles et `docker-compose-validate` pour notre fichier docker-compose.yml.
