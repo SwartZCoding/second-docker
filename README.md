@@ -23,8 +23,10 @@ docker compose -f docker-compose.yml --env-file .env.dev build
 
 ## Structure des secrets
 
-Les secrets doivent être créés dans le dossier `secrets/` :
-- `secrets.yml`: Secrets à ne pas exposer de l'application.
+Les secrets doivent être créés dans docker à l'aide des commandes suivantes :
+
+echo "MOTDEPASSESECURISE" | docker secret create db_password -
+echo "UNEAPPKEYSECURISE" | docker secret create app_key -
 
 ## Validation de la recette
 
