@@ -5,20 +5,20 @@
 ### Mode Production
 ```bash
 # Lancement standard
-docker compose up -d
+docker-compose --profile prod up
 
-# Reconstruction des images
-docker compose build --no-cache
-docker compose up -d
+# Reconstruction de l'image pour la production
+docker-compose --profile prod up --build
 ```
 
 ### Mode Développement
-```bash
-# Lancement avec watch mode
-docker compose -f docker-compose.yml --env-file .env.dev watch
 
-# Reconstruction pour le dev
-docker compose -f docker-compose.yml --env-file .env.dev build
+Nous n'utilisons pas la fonction watch de Docker car nous sommes sur une Stack Nuxt & Adonis qui disposent tous les 2 de Hot reload en cas de modification.
+```bash
+docker-compose --profile dev up
+
+# Reconstruction de l'image pour le dev
+docker-compose --profile dev up --build
 ```
 
 ## Structure des secrets
@@ -32,7 +32,6 @@ Cette méthode pour gérer les secrets nécessite que Docker Swarm soit activé 
 
 ```bash
 docker swarm init    # Si Swarm n'est pas encore activé
-docker stack deploy -c docker-compose.yml second-docker
 ```
 
 Les secrets seront montés dans le container sous forme de fichiers temporaires, ce qui améliore la sécurité car ils ne sont pas stockés comme des variables d'environnement.
@@ -53,7 +52,8 @@ pip install docker-compose-validate
 ### Exemple de validation
 ```bash
 # Validation du Dockerfile
-docker run --rm -i hadolint/hadolint < Dockerfile
+docker run --rm -i hadolint/hadolint < ./backend/Dockerfile
+docker run --rm -i hadolint/hadolint < ./frontend/Dockerfile
 
 # Validation du compose.yaml
 docker-compose-validate docker-compose.yml
@@ -65,6 +65,7 @@ docker-compose-validate docker-compose.yml
 $ docker-compose-validate docker-compose.yml
 Validation passed!
 
-$ docker run --rm -i hadolint/hadolint < Dockerfile
+$ docker run --rm -i hadolint/hadolint < ./backend/Dockerfile && docker run --rm -i hadolint/hadolint < ./frontend/Dockerfile
+No issues detected!
 No issues detected!
 ```
