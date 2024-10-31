@@ -62,3 +62,8 @@ networks:
   app-network:
     driver: bridge
 
+secrets:
+  db_password:
+    external: true
+  app_key:
+    external: true
