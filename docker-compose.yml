@@ -23,15 +23,12 @@ services:
       DB_CONNECTION: pg
       DB_HOST: postgres-db
       DB_PORT: 5432
-      DB_USER: postgres
+      DB_USER: adonis_user
       DB_PASSWORD: /run/secrets/db_password
-      DB_DATABASE: second-docker
-      SESSION_DRIVER: cookie
-      LOG_LEVEL: info
-      HOST: 0.0.0.0
+      DB_DATABASE: adonis_db
       APP_KEY: /run/secrets/app_key
-      PORT: 3333
-      NODE_ENV: production
+      HOST: 0.0.0.0
+      NODE_ENV: ${NODE_ENV:-development}
     secrets:
       - db_password
       - app_key
@@ -39,6 +36,19 @@ services:
       - postgres-db
     networks:
       - app-network
+
+    # Volume et commande pour le mode développement
+    profiles:
+      - dev
+    volumes:
+      - ./backend:/app
+    command: npm run dev
+
+    # Commande pour le mode production (sans volume pour garder l'app compilée)
+    profiles:
+      - prod
+    command: npm run start
+
 
   # Nuxt 3 Frontend
   nuxt-frontend:
