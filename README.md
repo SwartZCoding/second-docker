@@ -1,33 +1,59 @@
 # Projet Docker : Nuxt 3, AdonisJS 6, PostgreSQL
 
-## Prérequis
-- Docker
-- Docker Compose
+## Modes de lancement
 
-## Installation
+### Mode Production
+```bash
+# Lancement standard
+docker compose up -d
 
-1. Clonez le dépôt :
-   ```bash
-   git clone <url-du-dépôt>
-   cd first-docker 
-   ```
+# Reconstruction des images
+docker compose build --no-cache
+docker compose up -d
+```
 
-2. Structure du projet
-- /backend : Backend AdonisJS 6
-- /frontend : Frontend Nuxt 3
-- docker-compose.yml : Configuration des conteneurs Docker
+### Mode Développement
+```bash
+# Lancement avec watch mode
+docker compose -f docker-compose.yml --env-file .env.dev watch
 
-3. Persistance des données
-Les données PostgreSQL sont persistées grâce au volume Docker pgdata.
+# Reconstruction pour le dev
+docker compose -f docker-compose.yml --env-file .env.dev build
+```
 
-4. Réseaux Docker
-Tous les conteneurs communiquent via le réseau Docker app-network.
+## Structure des secrets
 
-## Lancement
+Les secrets doivent être créés dans le dossier `secrets/` :
+- `secrets.yml`: Secrets à ne pas exposer de l'application.
 
-1. Construire et lancer les containers
-   ```bash
-   docker-compose up --build
-   Accédez au frontend à l'adresse : http://localhost:3000
-   Accédez au frontend à l'adresse : http://localhost:3333
-   ```
+## Validation de la recette
+
+Nous utilisons `hadolint` pour valider nos Dockerfiles et `docker-compose-validate` pour notre fichier docker-compose.yml.
+
+### Installation des outils de validation
+```bash
+# Installation de hadolint
+docker pull hadolint/hadolint
+
+# Installation de docker-compose-validate (Nécessite Python)
+pip install docker-compose-validate
+```
+
+### Exemple de validation
+```bash
+# Validation du Dockerfile
+docker run --rm -i hadolint/hadolint < Dockerfile
+
+# Validation du compose.yaml
+docker-compose-validate docker-compose.yml
+```
+
+## Résultats de validation
+
+```bash
+$ docker-compose-validate docker-compose.yml
+Validation passed!
+
+$ docker run --rm -i hadolint/hadolint < Dockerfile
+No issues detected!
+```
