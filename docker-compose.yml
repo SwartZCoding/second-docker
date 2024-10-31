@@ -1,0 +1,61 @@
+version: '1'
+
+services:
+  # Service PostgreSQL
+  postgres-db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: adonis_user
+      POSTGRES_PASSWORD: adonis_password
+      POSTGRES_DB: adonis_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # AdonisJS Backend
+  adonis-backend:
+    build:
+      context: ./backend
+    ports:
+      - "3333:3333"
+    environment:
+      DB_CONNECTION: pg
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: adonis_user
+      DB_PASSWORD: adonis_password
+      DB_DATABASE: adonis_db
+      SESSION_DRIVER: cookie
+      LOG_LEVEL: info
+      HOST: 0.0.0.0
+      APP_KEY: qsjdqjisdjoiqijosdjoqod
+      PORT: 3333
+      NODE_ENV: production
+    depends_on:
+      - postgres-db
+    networks:
+      - app-network
+
+  # Nuxt 3 Frontend
+  nuxt-frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: http://adonis-backend:3333
+    depends_on:
+      - adonis-backend
+    networks:
+      - app-network
+
+# Volumes pour la persistance de la base de données
+volumes:
+  pgdata:
+
+# Réseau pour la communication entre les services
+networks:
+  app-network:
+    driver: bridge
+
